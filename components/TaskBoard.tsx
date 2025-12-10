@@ -1,6 +1,6 @@
 import React from 'react';
 import { Task, TaskStatus } from '../types';
-import { CheckCircle2, Circle, Clock, MoreVertical, Sparkles } from 'lucide-react';
+import { CheckCircle2, Circle, Clock, MoreVertical, Sparkles, Trash2 } from 'lucide-react';
 
 interface TaskBoardProps {
   tasks: Task[];
@@ -9,15 +9,15 @@ interface TaskBoardProps {
   isLoadingAI: boolean;
 }
 
-export const TaskBoard: React.FC<TaskBoardProps> = ({ 
-  tasks, 
-  onStatusChange, 
+export const TaskBoard: React.FC<TaskBoardProps> = ({
+  tasks,
+  onStatusChange,
   onDeleteTask,
   isLoadingAI
 }) => {
-  
+
   const getStatusIcon = (status: TaskStatus) => {
-    switch(status) {
+    switch (status) {
       case TaskStatus.DONE: return <CheckCircle2 className="w-5 h-5 text-green-500" />;
       case TaskStatus.IN_PROGRESS: return <Clock className="w-5 h-5 text-amber-500" />;
       default: return <Circle className="w-5 h-5 text-gray-300" />;
@@ -25,7 +25,7 @@ export const TaskBoard: React.FC<TaskBoardProps> = ({
   };
 
   const getStatusText = (status: TaskStatus) => {
-     switch(status) {
+    switch (status) {
       case TaskStatus.DONE: return 'הושלם';
       case TaskStatus.IN_PROGRESS: return 'בביצוע';
       default: return 'לביצוע';
@@ -56,19 +56,19 @@ export const TaskBoard: React.FC<TaskBoardProps> = ({
       ) : (
         <div className="grid gap-3">
           {tasks.map(task => (
-            <div 
-              key={task._id} 
+            <div
+              key={task._id}
               className={`
                 group bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all flex items-center justify-between
                 ${task.status === TaskStatus.DONE ? 'bg-gray-50' : ''}
               `}
             >
               <div className="flex items-center gap-4 flex-1">
-                <button 
+                <button
                   onClick={() => {
-                    const next = task.status === TaskStatus.TODO ? TaskStatus.IN_PROGRESS 
-                      : task.status === TaskStatus.IN_PROGRESS ? TaskStatus.DONE 
-                      : TaskStatus.TODO;
+                    const next = task.status === TaskStatus.TODO ? TaskStatus.IN_PROGRESS
+                      : task.status === TaskStatus.IN_PROGRESS ? TaskStatus.DONE
+                        : TaskStatus.TODO;
                     onStatusChange(task._id, next);
                   }}
                   className="hover:scale-110 transition-transform"
@@ -79,22 +79,22 @@ export const TaskBoard: React.FC<TaskBoardProps> = ({
                   <span className={`font-medium text-gray-800 ${task.status === TaskStatus.DONE ? 'line-through text-gray-400' : ''}`}>
                     {task.title}
                   </span>
-                  <span className={`text-xs w-fit px-2 py-0.5 rounded-full mt-1 ${
-                    task.status === TaskStatus.DONE ? 'bg-green-100 text-green-700' 
-                    : task.status === TaskStatus.IN_PROGRESS ? 'bg-amber-100 text-amber-700' 
-                    : 'bg-gray-100 text-gray-600'
-                  }`}>
+                  <span className={`text-xs w-fit px-2 py-0.5 rounded-full mt-1 ${task.status === TaskStatus.DONE ? 'bg-green-100 text-green-700'
+                      : task.status === TaskStatus.IN_PROGRESS ? 'bg-amber-100 text-amber-700'
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
                     {getStatusText(task.status)}
                   </span>
                 </div>
               </div>
-
               <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                <button 
+                <button
                   onClick={() => onDeleteTask(task._id)}
-                  className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                >
-                  <MoreVertical className="w-4 h-4" />
+                  className={`
+                    p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity
+                    ${task.status === TaskStatus.DONE ? 'text-indigo-400 hover:text-red-500 hover:bg-white' : 'text-gray-400 hover:text-red-500 hover:bg-gray-200'}
+                  `}                >
+                  <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             </div>

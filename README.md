@@ -99,5 +99,5 @@ The app will be available at `http://localhost:5173` (or the port Vite assigns).
 
 ---
 
-Built with ❤️ using React, Convex, and Google Gemini
+Built with ❤️ using React, Convex, and Google Gemini By Yossi Shor
 
