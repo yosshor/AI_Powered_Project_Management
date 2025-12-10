@@ -43,6 +43,7 @@ const App: React.FC = () => {
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [isGeneratingTasks, setIsGeneratingTasks] = useState(false);
   const [isChatLoading, setIsChatLoading] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
 
   // --- Handlers ---
 
@@ -90,10 +91,19 @@ const App: React.FC = () => {
 
   const handleDeleteProject = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (window.confirm('האם אתה בטוח שברצונך למחוק פרויקט זה?')) {
-      deleteProject({ id });
-      if (activeProjectId === id) setActiveProjectId(null);
+    setProjectToDelete(id);
+  };
+
+  const confirmDeleteProject = () => {
+    if (projectToDelete) {
+      deleteProject({ id: projectToDelete });
+      if (activeProjectId === projectToDelete) setActiveProjectId(null);
+      setProjectToDelete(null);
     }
+  };
+
+  const cancelDeleteProject = () => {
+    setProjectToDelete(null);
   };
 
   const handleGenerateAI = async () => {
@@ -242,7 +252,7 @@ const App: React.FC = () => {
 
       {/* New Project Modal */}
       {showNewProjectModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/10 backdrop-blur-[2px] z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-100">
             <div className="p-6 border-b border-gray-100">
               <h3 className="text-xl font-bold text-gray-900">פרויקט חדש</h3>
@@ -283,6 +293,53 @@ const App: React.FC = () => {
               >
                 צור פרויקט
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Project Confirmation Modal */}
+      {projectToDelete && (
+        <div className="fixed inset-0 bg-black/15 backdrop-blur-[2px] z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-100 animate-in fade-in zoom-in duration-200">
+            <div className="p-6">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-gray-900">מחיקת פרויקט</h3>
+                  <p className="text-sm text-gray-500 mt-1">פעולה זו לא ניתנת לביטול</p>
+                </div>
+              </div>
+              
+              <div className="mb-6">
+                <p className="text-gray-700 leading-relaxed">
+                  האם אתה בטוח שברצונך למחוק את הפרויקט <span className="font-semibold text-gray-900">
+                    {projects.find(p => p._id === projectToDelete)?.name || 'זה'}
+                  </span>?
+                </p>
+                <p className="text-sm text-gray-500 mt-2">
+                  כל המשימות וההודעות הקשורות לפרויקט זה יימחקו גם כן.
+                </p>
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <button 
+                  onClick={cancelDeleteProject}
+                  className="px-5 py-2.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium"
+                >
+                  ביטול
+                </button>
+                <button 
+                  onClick={confirmDeleteProject}
+                  className="px-5 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium shadow-md shadow-red-200"
+                >
+                  מחק פרויקט
+                </button>
+              </div>
             </div>
           </div>
         </div>
